@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { Commet } from "react-loading-indicators";
 import { IInfo, IListaEESSPrecio } from "./Interfaces/InfoGas";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Modal from "./Modal";
 
 const useStyles = makeStyles({
   blogContainer: {
@@ -49,12 +50,22 @@ function Blog() {
   const [info, setInfo] = useState<IInfo>();
   const [loading, setLoading] = useState(false);
   const [itemsPerPage] = useState(50);
-
+  const [open, setOpen] = useState(false);
+  const [itemGas, setItemGas] = useState();
 
   const [characters, setCharacters] = useState<any>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
+
+  function handleDataFromChild(data: boolean) {
+    setOpen(data);
+  }
+
+  const filtrado = (item: any) => {
+    setOpen(true);
+    setItemGas(item);
+  };
 
   useEffect(() => {
     fetchInfo();
@@ -71,34 +82,24 @@ function Blog() {
     let newItems: number = itemsPerPage;
     let pages: number = 1;
     setLoading(true);
-    console.log("LOADING: ", loading);
 
     if (!info) {
-      console.log("INFO: ", info);
-
       const response = await axios.get(baseURL);
       data = response.data;
-      //data.ListaEESSPrecio = data.ListaEESSPrecio.slice(currentItems, newItems);
       pages = data?.ListaEESSPrecio.length / itemsPerPage;
       setInfo(data);
-      console.log("DATA: ", data);
-      console.log("GASOLINERAS: ", data?.ListaEESSPrecio.length);
     }
 
     if (page > 1) {
-      console.log("else info");
       currentItems = page * itemsPerPage;
       newItems = currentItems + itemsPerPage;
     }
-
-    console.log("currentItems: ", currentItems);
-    console.log("newItems: ", newItems);
 
     setCharacters((prevPosts: []) => [
       ...prevPosts,
       ...data?.ListaEESSPrecio.slice(currentItems, newItems),
     ]);
-    console.log("Characters: ", characters);
+
     setPage((prevPage) => prevPage + 1);
     setTotalPages(pages);
 
@@ -113,15 +114,14 @@ function Blog() {
       <Typography variant="h5" className={classes.blogTitle}>
         Fecha de consulta: {info?.Fecha}
       </Typography>
+      {open && (
+        <Modal
+          isOpen={open}
+          itemGas={itemGas}
+          sendDataToParent={handleDataFromChild}
+        />
+      )}
 
-      {/* {loading ? (
-        <Backdrop
-          sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-          open={loading}
-        >
-          <Commet color="#32CD32" size="large" text="Cargando" textColor="" />
-        </Backdrop>
-      ) : ( */}
       <InfiniteScroll
         dataLength={characters.length}
         next={fetchInfo}
@@ -147,12 +147,6 @@ function Blog() {
                 <Grid2 key={key} size={{ xs: 12, sm: 6, md: 4 }}>
                   <Card className={classes.card}>
                     <CardActionArea>
-                      {/* <CardMedia
-                          component="img"
-                          className={classes.media}
-                          image="https://i0.wp.com/mundomotor.bike/wp-content/uploads/2024/06/duke-390-1.webp?resize=745%2C390&ssl=1"
-                          alt="green iguana"
-                        /> */}
                       <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
                           C.P: {item["C.P."]}
@@ -188,10 +182,12 @@ function Blog() {
                           Provincia: {item.Provincia}
                         </Typography>
                       </CardContent>
-                      <CardActions>
-                        <Button size="small" onClick={() => {}}>Leer más</Button>
-                      </CardActions>
                     </CardActionArea>
+                    <CardActions>
+                      <Button size="small" onClick={() => filtrado(item)}>
+                        Leer más
+                      </Button>
+                    </CardActions>
                   </Card>
                 </Grid2>
               );
@@ -199,7 +195,6 @@ function Blog() {
         </Grid2>
       </InfiniteScroll>
       {/* )} */}
-      
     </Container>
   );
 }
