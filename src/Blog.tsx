@@ -1,25 +1,20 @@
 import {
-  Avatar,
   Backdrop,
-  Box,
   Button,
   Card,
   CardActionArea,
   CardActions,
   CardContent,
-  CardMedia,
   Container,
   Grid2,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import BookmarkBorder from "@mui/icons-material/BookmarkBorder";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Commet } from "react-loading-indicators";
 import { IInfo, IListaEESSPrecio } from "./Interfaces/InfoGas";
 import InfiniteScroll from "react-infinite-scroll-component";
-import BasicModal from "./Modal";
 
 const useStyles = makeStyles({
   blogContainer: {
@@ -55,8 +50,6 @@ function Blog() {
   const [loading, setLoading] = useState(false);
   const [itemsPerPage] = useState(50);
 
-  const [modal, setModal] = useState(false);
-  const Toggle = () => setModal(true);
 
   const [characters, setCharacters] = useState<any>([]);
   const [page, setPage] = useState(1);
@@ -205,7 +198,7 @@ function Blog() {
                         </Typography>
                       </CardContent>
                       <CardActions>
-                        <Button size="small" onClick={() => {<BasicModal />}}>Leer más</Button>
+                        <Button size="small" onClick={() => {}}>Leer más</Button>
                       </CardActions>
                     </CardActionArea>
                   </Card>
