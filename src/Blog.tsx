@@ -73,15 +73,6 @@ function Blog() {
     setLoading(true);
     console.log("LOADING: ", loading);
 
-    // await axios.get(baseURL).then((response) => {
-    //   let info: IInfo = response.data;
-    //   info.ListaEESSPrecio = info.ListaEESSPrecio.slice(0, 50);
-    //   setInfo(info);
-    //   console.log("DATA: ", response.data);
-    //   console.log("GASOLINERAS: ", info.ListaEESSPrecio.length);
-    //   setLoading(false);
-    // });
-
     if (!info) {
       console.log("INFO: ", info);
 
